@@ -1,0 +1,117 @@
+<?php
+    session_start(); // Start session to get logged-in user
+
+    $hostname = "localhost";
+    $username = "root";
+    $password = "";
+    $databaseName = "dbpdf";
+
+    // Connect to MySQL database using mysqli
+    $connect = mysqli_connect($hostname, $username, $password, $databaseName);
+
+    if (!$connect) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    // Ensure user is logged in
+    if (!isset($_SESSION['user_id'])) {
+        die("Error: User not logged in.");
+    }
+
+    $user_id = $_SESSION['user_id']; // Get user ID from session
+
+    // Get values from input fields
+    $Surname = mysqli_real_escape_string($connect, $_GET['Surname']);
+    $Firstname = mysqli_real_escape_string($connect, $_GET['Firstname']);
+    $MiddleName = mysqli_real_escape_string($connect, $_GET['MiddleName']);
+    $info = mysqli_real_escape_string($connect, $_GET['info']);
+    $C4_signature = mysqli_real_escape_string($connect, $_GET['C4_signature']);
+    $C4_Picture = mysqli_real_escape_string($connect, $_GET['C4_Picture']);
+
+    // Existing input fields for infoextension
+    $Spouse_Occupation = mysqli_real_escape_string($connect, $_GET['Spouse_Occupation']);
+    $Father_Surname = mysqli_real_escape_string($connect, $_GET['Father_Surname']);
+    $Father_Firstname = mysqli_real_escape_string($connect, $_GET['Father_Firstname']);
+    $Father_NameExtension = mysqli_real_escape_string($connect, $_GET['Father_NameExtension']);
+    $Mother_MaidenName = mysqli_real_escape_string($connect, $_GET['Mother_MaidenName']);
+    $Mother_Surname = mysqli_real_escape_string($connect, $_GET['Mother_Surname']);
+    $Mother_Firstname = mysqli_real_escape_string($connect, $_GET['Mother_Firstname']);
+    $Mother_Middlename = mysqli_real_escape_string($connect, $_GET['Mother_Middlename']);
+    $NOF_Secondary = mysqli_real_escape_string($connect, $_GET['NOF_Secondary']);
+    $CS_RA_CES_CSEE_DL = mysqli_real_escape_string($connect, $_GET['CS_RA_CES_CSEE_DL']);
+    $Rating = mysqli_real_escape_string($connect, $_GET['Rating']);
+    $DOT_C = mysqli_real_escape_string($connect, $_GET['DOT_C']);
+    $POE_C = mysqli_real_escape_string($connect, $_GET['POE_C']);
+    $LNumber = mysqli_real_escape_string($connect, $_GET['LNumber']);
+    $LValidity = mysqli_real_escape_string($connect, $_GET['LValidity']);
+    $V_I_D_From = mysqli_real_escape_string($connect, $_GET['V_I_D_From']);
+    $V_I_D_To = mysqli_real_escape_string($connect, $_GET['V_I_D_To']);
+    $V_PosTitle = mysqli_real_escape_string($connect, $_GET['V_PosTitle']);
+    $V_D_A_O_C = mysqli_real_escape_string($connect, $_GET['V_D_A_O_C']);
+    $V_MS = mysqli_real_escape_string($connect, $_GET['V_MS']);
+    $V_S_J_PG = mysqli_real_escape_string($connect, $_GET['V_S_J_PG']);
+    $V_SOA = mysqli_real_escape_string($connect, $_GET['V_SOA']);
+    $V_GOS = mysqli_real_escape_string($connect, $_GET['V_GOS']);
+    $NAOF = mysqli_real_escape_string($connect, $_GET['NAOF']);
+    $VI_I_D_From = mysqli_real_escape_string($connect, $_GET['VI_I_D_From']);
+    $VI_NOF = mysqli_real_escape_string($connect, $_GET['VI_NOF']);
+    $VI_POS_NOW = mysqli_real_escape_string($connect, $_GET['VI_POS_NOW']);
+    $TOLADI_TP = mysqli_real_escape_string($connect, $_GET['TOLADI_TP']);
+    $VII_I_D_From = mysqli_real_escape_string($connect, $_GET['VII_I_D_From']);
+    $VII_I_D_To = mysqli_real_escape_string($connect, $_GET['VII_I_D_To']);
+    $VII_NOF = mysqli_real_escape_string($connect, $_GET['VII_NOF']);
+    $VII_TOLD = mysqli_real_escape_string($connect, $_GET['VII_TOLD']);
+    $VII_POS_NOF = mysqli_real_escape_string($connect, $_GET['VII_POS_NOF']);
+
+    // Prepare JSON object for infoextension
+    $infoextension = json_encode([
+        'Spouse_Occupation' => $Spouse_Occupation,
+        'Father_Surname' => $Father_Surname,
+        'Father_Firstname' => $Father_Firstname,
+        'Father_NameExtension' => $Father_NameExtension,
+        'Mother_MaidenName' => $Mother_MaidenName,
+        'Mother_Surname' => $Mother_Surname,
+        'Mother_Firstname' => $Mother_Firstname,
+        'Mother_Middlename' => $Mother_Middlename,
+        'NOF_Secondary' => $NOF_Secondary,
+        'CS_RA_CES_CSEE_DL' => $CS_RA_CES_CSEE_DL,
+        'Rating' => $Rating,
+        'DOT_C' => $DOT_C,
+        'POE_C' => $POE_C,
+        'LNumber' => $LNumber,
+        'LValidity' => $LValidity,
+        'V_I_D_From' => $V_I_D_From,
+        'V_I_D_To' => $V_I_D_To,
+        'V_PosTitle' => $V_PosTitle,
+        'V_D_A_O_C' => $V_D_A_O_C,
+        'V_MS' => $V_MS,
+        'V_S_J_PG' => $V_S_J_PG,
+        'V_SOA' => $V_SOA,
+        'V_GOS' => $V_GOS,
+        'NAOF' => $NAOF,
+        'VI_I_D_From' => $VI_I_D_From,
+        'VI_NOF' => $VI_NOF,
+        'VI_POS_NOW' => $VI_POS_NOW,
+        'TOLADI_TP' => $TOLADI_TP,
+        'VII_I_D_From' => $VII_I_D_From,
+        'VII_I_D_To' => $VII_I_D_To,
+        'VII_NOF' => $VII_NOF,
+        'VII_TOLD' => $VII_TOLD,
+        'VII_POS_NOF' => $VII_POS_NOF
+    ]);
+
+    // Insert query including user_id and infoextension
+    $query = "INSERT INTO `tblpdf`(`Surname`, `Firstname`, `MiddleName`, `info`, `infoextension`, `user_id`, C4_signature, C4_Picture) 
+              VALUES ('$Surname', '$Firstname', '$MiddleName', '$info', '$infoextension', '$user_id', '$C4_signature', '$C4_Picture')";
+
+    $result = mysqli_query($connect, $query);
+
+    if ($result) {
+        header("Location: /iso/dashboard.php"); // Redirect after successful insertion
+        exit;
+    } else {
+        echo "Data Not Inserted: " . mysqli_error($connect);
+    }
+
+    mysqli_close($connect);
+?>
